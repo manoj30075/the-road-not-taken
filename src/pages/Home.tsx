@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ScenarioInput from '../components/scenarios/ScenarioInput';
 import ScenarioList from '../components/scenarios/ScenarioList';
+import Suggestions from '../components/scenarios/Suggestions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 
@@ -24,6 +25,8 @@ const Home: React.FC = () => {
     const [currentScenarioId, setCurrentScenarioId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showSuggestions, setShowSuggestions] = useState(true);
+    const [inputValue, setInputValue] = useState('');
     const inputRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -44,6 +47,7 @@ const Home: React.FC = () => {
     const fetchScenarios = async (query: string) => {
         setIsLoading(true);
         setError(null);
+        setShowSuggestions(false);
 
         try {
             const response = await fetch(`${API_BASE_URL}/api/scenarios/initial`, {
@@ -134,6 +138,20 @@ const Home: React.FC = () => {
         }
     };
 
+    const handleSuggestionSelect = (suggestion: string) => {
+        setInputValue(suggestion);
+        fetchScenarios(suggestion);
+    };
+
+    const handleInputChange = (value: string) => {
+        setInputValue(value);
+        setShowSuggestions(true);
+    };
+
+    const handleInputSubmit = (value: string) => {
+        fetchScenarios(value);
+    };
+
     const getCurrentScenarios = (): Scenario[] => {
         if (!currentScenarioId) return [];
         return Object.values(allScenarios).filter(scenario => scenario.parentId === currentScenarioId);
@@ -164,7 +182,14 @@ const Home: React.FC = () => {
             transition={{ duration: 0.5 }}
         >
             <div ref={inputRef} className="bg-white py-4 mb-4 w-full">
-                <ScenarioInput onSubmit={fetchScenarios} />
+                <ScenarioInput
+                    onSubmit={handleInputSubmit}
+                    onChange={handleInputChange}
+                    value={inputValue}
+                />
+                {showSuggestions && !isLoading && Object.keys(allScenarios).length === 0 && (
+                    <Suggestions onSelect={handleSuggestionSelect} />
+                )}
             </div>
 
             <AnimatePresence>

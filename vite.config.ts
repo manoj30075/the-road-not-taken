@@ -6,6 +6,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true, // This exposes the server to your local network
-    port: 5173  // This is usually the default port, but you can change it if needed
-  }
+    port: 5173, // This is usually the default port, but you can change it if needed
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+
 })

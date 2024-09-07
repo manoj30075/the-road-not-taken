@@ -176,21 +176,24 @@ const Home: React.FC = () => {
 
     return (
         <motion.div
-            className="container mx-auto px-4 py-8"
+            className="max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
         >
-            <div ref={inputRef} className="bg-white py-4 mb-4 w-full">
+            <h1 className="text-4xl font-bold text-center mb-8">What If Explorer</h1>
+
+            <div ref={inputRef} className="sticky top-0 bg-[#FAF9F6] py-4 z-10">
                 <ScenarioInput
                     onSubmit={handleInputSubmit}
                     onChange={handleInputChange}
                     value={inputValue}
                 />
-                {showSuggestions && !isLoading && Object.keys(allScenarios).length === 0 && (
-                    <Suggestions onSelect={handleSuggestionSelect} />
-                )}
             </div>
+
+            {showSuggestions && !isLoading && Object.keys(allScenarios).length === 0 && (
+                <Suggestions onSelect={handleSuggestionSelect} />
+            )}
 
             <AnimatePresence>
                 {scenarioHierarchy.length > 0 && (
@@ -207,7 +210,7 @@ const Home: React.FC = () => {
                             </button>
                         )}
                         <h2 className="text-2xl font-bold">
-                            What if {scenarioHierarchy[scenarioHierarchy.length - 1].question}?
+                            {scenarioHierarchy[scenarioHierarchy.length - 1].question}
                         </h2>
                     </motion.div>
                 )}
@@ -219,9 +222,9 @@ const Home: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex justify-center items-center h-64"
+                    className="flex justify-center items-center h-32"
                 >
-                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-500"></div>
+                    <div className="w-8 h-8 border-4 border-[#C4634F] border-t-transparent rounded-full animate-spin"></div>
                 </motion.div>
             )}
 

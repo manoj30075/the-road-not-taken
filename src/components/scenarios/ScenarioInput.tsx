@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SendIcon } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface ScenarioInputProps {
     onSubmit: (scenario: string) => void;
@@ -18,29 +18,26 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({ onSubmit, onChange, value
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-md mx-auto mt-8 mb-4 relative"
+            className="w-full max-w-md mx-auto relative"
         >
             <form onSubmit={handleSubmit} className="relative">
-                <motion.input
+                <input
                     type="text"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="What if..."
-                    className="w-full py-3 px-4 pr-12 rounded-full bg-white bg-opacity-80 backdrop-blur-sm border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 10 }}
+                    className="input-primary w-full pr-12"
                 />
                 <motion.button
                     type="submit"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-500 text-white rounded-full p-2 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    style={{ height: '40px', width: '40px' }}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-primary p-2"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    <SendIcon size={20} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    <ArrowRight size={20} />
                 </motion.button>
             </form>
         </motion.div>

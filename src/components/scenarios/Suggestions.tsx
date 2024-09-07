@@ -86,16 +86,16 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     };
 
     const cardVariants = {
-        top: { y: '-30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", width: '70%' },
-        center: { y: 0, scale: 1, zIndex: 3, filter: "blur(0px)", width: '80%' },
-        bottom: { y: '30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", width: '70%' },
+        top: { y: '-30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", opacity: 0.7 },
+        center: { y: 0, scale: 1, zIndex: 3, filter: "blur(0px)", opacity: 1 },
+        bottom: { y: '30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", opacity: 0.7 },
     };
 
     return (
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-col items-center justify-center w-full my-8">
             <div
                 ref={containerRef}
-                className="relative w-full h-80 flex items-center justify-center overflow-hidden mb-4"
+                className="relative w-full h-64 flex items-center justify-center overflow-hidden mb-4"
             >
                 <AnimatePresence initial={false}>
                     {[-1, 0, 1].map((offset) => {
@@ -103,7 +103,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                         return (
                             <motion.div
                                 key={suggestions[index]}
-                                className="absolute bg-green-500 rounded-lg p-4 cursor-pointer flex items-center justify-center"
+                                className="absolute bg-white rounded-lg p-4 cursor-pointer flex items-center justify-center shadow-md"
                                 variants={cardVariants}
                                 initial={offset === -1 ? "top" : offset === 1 ? "bottom" : "center"}
                                 animate={offset === -1 ? "top" : offset === 1 ? "bottom" : "center"}
@@ -111,15 +111,15 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                                     y: { type: "spring", stiffness: 300, damping: 30 },
                                     scale: { duration: 0.2 },
                                     filter: { duration: 0.2 },
-                                    width: { duration: 0.2 },
+                                    opacity: { duration: 0.2 },
                                 }}
                                 style={{
-                                    height: '33%',
-                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                    width: '80%',
+                                    height: '40%',
                                 }}
                                 onClick={() => offset === 0 && onSelect(suggestions[index])}
                             >
-                                <p className="text-white text-center text-xl overflow-hidden overflow-ellipsis">
+                                <p className="text-center text-lg overflow-hidden overflow-ellipsis">
                                     {suggestions[index]}
                                 </p>
                             </motion.div>
@@ -127,19 +127,23 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                     })}
                 </AnimatePresence>
             </div>
-            <div className="flex justify-center space-x-4 w-full px-4">
-                <button
+            <div className="flex justify-center space-x-4">
+                <motion.button
                     onClick={navigateUp}
-                    className="bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors duration-200 flex-grow"
+                    className="btn-primary"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    <ChevronUp size={24} className="mx-auto" />
-                </button>
-                <button
+                    <ChevronUp size={24} />
+                </motion.button>
+                <motion.button
                     onClick={navigateDown}
-                    className="bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors duration-200 flex-grow"
+                    className="btn-primary"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    <ChevronDown size={24} className="mx-auto" />
-                </button>
+                    <ChevronDown size={24} />
+                </motion.button>
             </div>
         </div>
     );

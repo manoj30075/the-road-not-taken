@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -18,17 +18,13 @@ interface ScenarioListProps {
 const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onScenarioSelect }) => {
     const [expandedScenario, setExpandedScenario] = useState<string | null>(null);
 
-    useEffect(() => {
-        setExpandedScenario(null);
-    }, [scenarios]);
-
     const toggleScenario = (id: string) => {
         setExpandedScenario(expandedScenario === id ? null : id);
     };
 
     return (
         <motion.div
-            className="mt-8 space-y-4"
+            className="space-y-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -37,7 +33,7 @@ const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onScenarioSelect
                 {scenarios.map((scenario) => (
                     <motion.div
                         key={scenario.id}
-                        className="bg-white rounded-lg shadow-md overflow-hidden"
+                        className="bg-white rounded-lg shadow-sm overflow-hidden"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
@@ -47,8 +43,8 @@ const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onScenarioSelect
                             className="flex justify-between items-center p-4 cursor-pointer"
                             onClick={() => toggleScenario(scenario.id)}
                         >
-                            <h3 className="font-semibold text-lg">{scenario.question}</h3>
-                            {expandedScenario === scenario.id ? <ChevronUp /> : <ChevronDown />}
+                            <h3 className="font-medium text-lg">{scenario.question}</h3>
+                            {expandedScenario === scenario.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </motion.div>
                         <AnimatePresence>
                             {expandedScenario === scenario.id && (
@@ -61,12 +57,12 @@ const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onScenarioSelect
                                 >
                                     <p className="text-gray-600 mb-2">{scenario.description}</p>
                                     <div className="flex justify-between items-center">
-                    <span className="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
-                      {scenario.category}
-                    </span>
+                                        <span className="inline-block bg-[#C4634F] bg-opacity-10 text-[#C4634F] text-xs px-2 py-1 rounded-full">
+                                            {scenario.category}
+                                        </span>
                                         <button
                                             onClick={() => onScenarioSelect(scenario)}
-                                            className="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm hover:bg-indigo-600 transition-colors duration-200"
+                                            className="btn-primary text-sm"
                                         >
                                             Explore
                                         </button>

@@ -1,14 +1,16 @@
+import React from 'react';
 import Home from './pages/Home';
+import InfoPopup from './components/InfoPopup';
 
 function App() {
     return (
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-            <main className="flex-grow px-4">
+        <div className="min-h-screen bg-[#FAF9F6]">
+            <main className="container mx-auto px-4 py-8">
                 <Home />
             </main>
-            {/*<BottomNav />*/}
+            <InfoPopup />
         </div>
     )
 }
 
-export default App
+export default App;

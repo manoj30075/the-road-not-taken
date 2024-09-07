@@ -1,5 +1,3 @@
-import React from 'react'
-import BottomNav from './components/layout/BottomNav';
 import Home from './pages/Home';
 
 function App() {

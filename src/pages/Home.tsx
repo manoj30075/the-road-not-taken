@@ -27,6 +27,7 @@ const Home: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
     const [inputValue, setInputValue] = useState('');
+    const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(true);
     const inputRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

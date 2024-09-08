@@ -11,6 +11,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
     const touchStartY = useRef<number | null>(null);
 
@@ -35,12 +36,15 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     }, [suggestions]);
 
     const fetchSuggestions = async () => {
+        setIsLoading(true);
         try {
             const response = await fetch(`${API_BASE_URL}/api/scenarios/suggestions`);
             const data = await response.json();
             setSuggestions(data.queries);
         } catch (error) {
             console.error('Error fetching suggestions:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -86,16 +90,24 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     };
 
     const cardVariants = {
-        top: { y: '-30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", opacity: 0.7 },
-        center: { y: 0, scale: 1, zIndex: 3, filter: "blur(0px)", opacity: 1 },
-        bottom: { y: '30%', scale: 0.9, zIndex: 1, filter: "blur(2px)", opacity: 0.7 },
+        top: { y: '-50%', scale: 0.9, zIndex: 1, opacity: 0.5 },
+        center: { y: 0, scale: 1, zIndex: 3, opacity: 1 },
+        bottom: { y: '50%', scale: 0.9, zIndex: 1, opacity: 0.5 },
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-48">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C4634F]"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col items-center justify-center w-full my-8">
             <div
                 ref={containerRef}
-                className="relative w-full h-64 flex items-center justify-center overflow-hidden mb-4"
+                className="relative w-full h-48 flex items-center justify-center overflow-hidden mb-2"
             >
                 <AnimatePresence initial={false}>
                     {[-1, 0, 1].map((offset) => {
@@ -103,23 +115,19 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                         return (
                             <motion.div
                                 key={suggestions[index]}
-                                className="absolute bg-white rounded-lg p-4 cursor-pointer flex items-center justify-center shadow-md"
+                                className="absolute bg-white rounded-lg p-6 cursor-pointer flex items-center justify-center shadow-md w-full max-w-sm"
                                 variants={cardVariants}
                                 initial={offset === -1 ? "top" : offset === 1 ? "bottom" : "center"}
                                 animate={offset === -1 ? "top" : offset === 1 ? "bottom" : "center"}
                                 transition={{
                                     y: { type: "spring", stiffness: 300, damping: 30 },
                                     scale: { duration: 0.2 },
-                                    filter: { duration: 0.2 },
                                     opacity: { duration: 0.2 },
                                 }}
-                                style={{
-                                    width: '80%',
-                                    height: '40%',
-                                }}
+                                style={{ height: '90px' }}
                                 onClick={() => offset === 0 && onSelect(suggestions[index])}
                             >
-                                <p className="text-center text-lg overflow-hidden overflow-ellipsis">
+                                <p className="text-center text-lg overflow-hidden overflow-ellipsis px-4">
                                     {suggestions[index]}
                                 </p>
                             </motion.div>
@@ -130,19 +138,19 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
             <div className="flex justify-center space-x-4">
                 <motion.button
                     onClick={navigateUp}
-                    className="btn-primary"
+                    className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <ChevronUp size={24} />
+                    <ChevronUp size={20} />
                 </motion.button>
                 <motion.button
                     onClick={navigateDown}
-                    className="btn-primary"
+                    className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <ChevronDown size={24} />
+                    <ChevronDown size={20} />
                 </motion.button>
             </div>
         </div>

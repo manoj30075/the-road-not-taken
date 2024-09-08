@@ -25,7 +25,7 @@ Welcome to the frontend repository of the "What If Scenario Explorer" project! T
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/what-if-scenario-explorer-frontend.git
+   git clone https://github.com/manoj30075/what-if-scenario-explorer-frontend.git
    ```
 
 2. Install the dependencies:

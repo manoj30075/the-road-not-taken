@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ScenarioInput from '../components/scenarios/ScenarioInput';
 import ScenarioList from '../components/scenarios/ScenarioList';
 import Suggestions from '../components/scenarios/Suggestions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
+import forestIcon from '../assets/images/forest-silhouette.png';
 
 interface Scenario {
     id: string;
@@ -28,14 +30,33 @@ const Home: React.FC = () => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const [inputValue, setInputValue] = useState('');
     const inputRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+    const { question } = useParams<{ question: string }>();
+    const location = useLocation();
+
+    useEffect(() => {
+        // Reset state when component mounts or route changes
+        setAllScenarios({});
+        setCurrentScenarioId(null);
+        setIsLoading(false);
+        setError(null);
+        setShowSuggestions(true);
+        setInputValue('');
+
+        if (question) {
+            const decodedQuestion = decodeURIComponent(question.replace(/-/g, ' '));
+            setInputValue(decodedQuestion);
+            fetchScenarios(decodedQuestion);
+        }
+    }, [question, location.pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
             if (inputRef.current) {
                 if (window.scrollY > 100) {
-                    inputRef.current.classList.add('fixed', 'top-0', 'left-0', 'right-0', 'z-10', 'bg-white', 'shadow-md');
+                    inputRef.current.classList.add('fixed', 'top-0', 'left-0', 'right-0', 'z-10');
                 } else {
-                    inputRef.current.classList.remove('fixed', 'top-0', 'left-0', 'right-0', 'z-10', 'bg-white', 'shadow-md');
+                    inputRef.current.classList.remove('fixed', 'top-0', 'left-0', 'right-0', 'z-10');
                 }
             }
         };
@@ -63,7 +84,6 @@ const Home: React.FC = () => {
             }
 
             const data: ApiResponse = await response.json();
-            console.log('API Response:', data);
 
             const rootScenario: Scenario = {
                 id: 'root',
@@ -89,6 +109,7 @@ const Home: React.FC = () => {
     };
 
     const handleExplore = async (selectedScenario: Scenario) => {
+        setCurrentScenarioId(selectedScenario.id);
         setIsLoading(true);
         setError(null);
 
@@ -112,7 +133,6 @@ const Home: React.FC = () => {
             }
 
             const data: ApiResponse = await response.json();
-            console.log('API Response:', data);
 
             const newScenarios = {
                 ...allScenarios,
@@ -120,7 +140,6 @@ const Home: React.FC = () => {
             };
 
             setAllScenarios(newScenarios);
-            setCurrentScenarioId(selectedScenario.id);
         } catch (err) {
             setError('An error occurred while fetching scenarios. Please try again.');
             console.error('Error:', err);
@@ -140,7 +159,9 @@ const Home: React.FC = () => {
 
     const handleSuggestionSelect = (suggestion: string) => {
         setInputValue(suggestion);
-        fetchScenarios(suggestion);
+        // Update URL
+        const urlFriendlyQuery = suggestion.toLowerCase().replace(/\s+/g, '-');
+        navigate(`/what-if/${urlFriendlyQuery}`);
     };
 
     const handleInputChange = (value: string) => {
@@ -149,7 +170,9 @@ const Home: React.FC = () => {
     };
 
     const handleInputSubmit = (value: string) => {
-        fetchScenarios(value);
+        // Update URL
+        const urlFriendlyQuery = value.toLowerCase().replace(/\s+/g, '-');
+        navigate(`/what-if/${urlFriendlyQuery}`);
     };
 
     const getCurrentScenarios = (): Scenario[] => {
@@ -176,64 +199,67 @@ const Home: React.FC = () => {
 
     return (
         <motion.div
-            className="max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            className="max-w-2xl mx-auto relative pt-20"
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{duration: 0.5}}
         >
-            <h1 className="text-4xl font-bold text-center mb-8">What If Explorer</h1>
+            <div className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pt-4 bg-[#FAF9F6]">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 mb-2"> {/* Circular container */}
+                    <img
+                        src={forestIcon}
+                        alt="Forest Icon"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+            </div>
+            <h1 className="text-4xl font-bold text-center mb-4">What If...?</h1>
 
-            <div ref={inputRef} className="sticky top-0 bg-[#FAF9F6] py-4 z-10">
+            <div ref={inputRef} className="sticky top-[75px] z-40 bg-[#FAF9F6] pt-10 pb-2">
                 <ScenarioInput
                     onSubmit={handleInputSubmit}
                     onChange={handleInputChange}
                     value={inputValue}
                 />
             </div>
-
             {showSuggestions && !isLoading && Object.keys(allScenarios).length === 0 && (
-                <Suggestions onSelect={handleSuggestionSelect} />
+                <Suggestions onSelect={handleSuggestionSelect}/>
             )}
 
             <AnimatePresence>
                 {scenarioHierarchy.length > 0 && (
                     <motion.div
                         key="question-hierarchy"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
+                        initial={{opacity: 0, y: -20}}
+                        animate={{opacity: 1, y: 0}}
+                        exit={{opacity: 0, y: -20}}
                         className="mb-4 flex items-center"
                     >
                         {scenarioHierarchy.length > 1 && (
-                            <button onClick={handleReturn} className="mr-2 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200">
-                                <ArrowUp size={20} />
+                            <button onClick={handleReturn}
+                                    className="mr-2 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 bg-[#C4634F] text-white rounded-full">
+                                <ArrowUp size={20}/>
                             </button>
                         )}
                         <h2 className="text-2xl font-bold">
-                            {scenarioHierarchy[scenarioHierarchy.length - 1].question}
+                            {allScenarios[currentScenarioId]?.question}
                         </h2>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             {isLoading && (
-                <motion.div
-                    key="loader"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex justify-center items-center h-32"
-                >
-                    <div className="w-8 h-8 border-4 border-[#C4634F] border-t-transparent rounded-full animate-spin"></div>
-                </motion.div>
+                <div className="flex justify-center items-center h-48">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C4634F]"></div>
+                </div>
             )}
 
             {error && (
                 <motion.div
                     key="error"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
                     className="text-red-500 text-center mt-4"
                 >
                     {error}
@@ -242,7 +268,8 @@ const Home: React.FC = () => {
 
             <AnimatePresence>
                 {!isLoading && getCurrentScenarios().length > 0 && (
-                    <ScenarioList key="scenario-list" scenarios={getCurrentScenarios()} onScenarioSelect={handleExplore} />
+                    <ScenarioList key="scenario-list" scenarios={getCurrentScenarios()}
+                                  onScenarioSelect={handleExplore}/>
                 )}
             </AnimatePresence>
         </motion.div>

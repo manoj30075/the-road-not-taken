@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect, useRef, TouchEvent } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -15,59 +15,50 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     const [isLoading, setIsLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
     const touchStartY = useRef<number | null>(null);
+    const fetchedRef = useRef(false);
 
-    useEffect(() => {
-        fetchSuggestions();
-    }, []);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('wheel', handleScroll);
-            container.addEventListener('touchstart', handleTouchStart);
-            container.addEventListener('touchmove', handleTouchMove);
-            container.addEventListener('touchend', handleTouchEnd);
-            return () => {
-                container.removeEventListener('wheel', handleScroll);
-                container.removeEventListener('touchstart', handleTouchStart);
-                container.removeEventListener('touchmove', handleTouchMove);
-                container.removeEventListener('touchend', handleTouchEnd);
-            };
-        }
-    }, [suggestions]);
-
-    const fetchSuggestions = async () => {
+    const fetchSuggestions = useCallback(async () => {
+        if (fetchedRef.current) return;
         setIsLoading(true);
         try {
             const response = await fetch(`${API_BASE_URL}/api/scenarios/suggestions`);
             const data = await response.json();
             setSuggestions(data.queries);
+            fetchedRef.current = true;
         } catch (error) {
             console.error('Error fetching suggestions:', error);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
-    const handleScroll = (event: WheelEvent) => {
-        event.preventDefault();
-        if (event.deltaY > 0) {
-            navigateDown();
-        } else {
-            navigateUp();
-        }
-    };
+    useEffect(() => {
+        fetchSuggestions();
+    }, [fetchSuggestions]);
 
-    const handleTouchStart = (event: TouchEvent) => {
-        touchStartY.current = event.touches[0].clientY;
-    };
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
 
-    const handleTouchMove = (event: TouchEvent) => {
-        event.preventDefault();
-    };
+        const handleScroll = (event: WheelEvent) => {
+            event.preventDefault();
+            if (event.deltaY > 0) {
+                navigateDown();
+            } else {
+                navigateUp();
+            }
+        };
 
-    const handleTouchEnd = (event: TouchEvent) => {
-        if (touchStartY.current !== null) {
+        const handleTouchStart = (event: TouchEvent) => {
+            touchStartY.current = event.touches[0].clientY;
+        };
+
+        const handleTouchMove = (event: TouchEvent) => {
+            event.preventDefault();
+        };
+
+        const handleTouchEnd = (event: TouchEvent) => {
+            if (touchStartY.current === null) return;
             const touchEndY = event.changedTouches[0].clientY;
             const deltaY = touchEndY - touchStartY.current;
 
@@ -79,8 +70,20 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                 }
             }
             touchStartY.current = null;
-        }
-    };
+        };
+
+        container.addEventListener('wheel', handleScroll);
+        container.addEventListener('touchstart', handleTouchStart);
+        container.addEventListener('touchmove', handleTouchMove);
+        container.addEventListener('touchend', handleTouchEnd);
+
+        return () => {
+            container.removeEventListener('wheel', handleScroll);
+            container.removeEventListener('touchstart', handleTouchStart);
+            container.removeEventListener('touchmove', handleTouchMove);
+            container.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [suggestions]);
 
     const navigateUp = () => {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + suggestions.length) % suggestions.length);
@@ -105,7 +108,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center w-full my-8">
+        <div className="flex flex-col items-center justify-center w-full my-10">
             <div
                 ref={containerRef}
                 className="relative w-full h-48 flex items-center justify-center overflow-hidden mb-2"
@@ -125,7 +128,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                                     scale: { duration: 0.2 },
                                     opacity: { duration: 0.2 },
                                 }}
-                                style={{ height: '90px' }}
+                                style={{ height: '100px' }}
                                 onClick={() => offset === 0 && onSelect(suggestions[index])}
                             >
                                 <p className="text-center text-lg overflow-hidden overflow-ellipsis px-4">
@@ -136,9 +139,9 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                     })}
                 </AnimatePresence>
             </div>
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 m-10">
                 <motion.button
-                    onClick={navigateUp}
+                    onClick={navigateDown}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -146,7 +149,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                     <ChevronUp size={20} />
                 </motion.button>
                 <motion.button
-                    onClick={navigateDown}
+                    onClick={navigateUp}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

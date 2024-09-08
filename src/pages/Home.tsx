@@ -242,7 +242,7 @@ const Home: React.FC = () => {
                             </button>
                         )}
                         <h2 className="text-2xl font-bold">
-                            {allScenarios[currentScenarioId]?.question}
+                            {currentScenarioId ? allScenarios[currentScenarioId]?.question : ''}
                         </h2>
                     </motion.div>
                 )}

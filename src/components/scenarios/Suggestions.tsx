@@ -1,13 +1,14 @@
-// @ts-nocheck
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const SUGGESTIONS_CACHE_KEY = 'cachedSuggestions';
+const SUGGESTIONS_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 interface SuggestionsProps {
     onSelect: (suggestion: string) => void;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -15,16 +16,26 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     const [isLoading, setIsLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
     const touchStartY = useRef<number | null>(null);
-    const fetchedRef = useRef(false);
 
     const fetchSuggestions = useCallback(async () => {
-        if (fetchedRef.current) return;
-        setIsLoading(true);
+        const cachedData = localStorage.getItem(SUGGESTIONS_CACHE_KEY);
+        if (cachedData) {
+            const { suggestions, timestamp } = JSON.parse(cachedData);
+            if (Date.now() - timestamp < SUGGESTIONS_CACHE_DURATION) {
+                setSuggestions(suggestions);
+                setIsLoading(false);
+                return;
+            }
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/scenarios/suggestions`);
             const data = await response.json();
             setSuggestions(data.queries);
-            fetchedRef.current = true;
+            localStorage.setItem(SUGGESTIONS_CACHE_KEY, JSON.stringify({
+                suggestions: data.queries,
+                timestamp: Date.now()
+            }));
         } catch (error) {
             console.error('Error fetching suggestions:', error);
         } finally {
@@ -107,6 +118,10 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
         );
     }
 
+    if (suggestions.length === 0) {
+        return null;
+    }
+
     return (
         <div className="flex flex-col items-center justify-center w-full my-10">
             <div
@@ -141,7 +156,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
             </div>
             <div className="flex justify-center space-x-4 m-10">
                 <motion.button
-                    onClick={navigateDown}
+                    onClick={navigateUp}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -149,7 +164,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                     <ChevronUp size={20} />
                 </motion.button>
                 <motion.button
-                    onClick={navigateUp}
+                    onClick={navigateDown}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

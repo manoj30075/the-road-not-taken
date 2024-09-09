@@ -238,7 +238,7 @@ const Home: React.FC = () => {
             animate={{opacity: 1}}
             transition={{duration: 0.5}}
         >
-            <div className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pt-4 bg-[#FAF9F6]">
+            <div className="fixed top-0 left-0 right-0 z-40 flex flex-col items-center pt-4 bg-[#FAF9F6]">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 mb-2">
                     <img
                         src={forestIcon}

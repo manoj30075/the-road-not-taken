@@ -13,6 +13,7 @@ export default {
         'navy': {
           800: '#1C2A3A',  // Dark navy color for the navigation bar
         },
+        'custom-one': '#C4634F'
       },
     },
   },

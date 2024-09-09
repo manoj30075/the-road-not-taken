@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {ArrowRight, ChevronDown, HelpCircle} from 'lucide-react';
+import { ChevronDown, InfoIcon, X} from 'lucide-react';
 
 interface ScenarioInputProps {
     onSubmit: (scenario: string, assumption: string) => void;
@@ -10,21 +10,50 @@ interface ScenarioInputProps {
     assumptionValue: string;
 }
 
+const ASSUMPTION_STORAGE_KEY = 'lastAssumption';
+
 const ScenarioInput: React.FC<ScenarioInputProps> = ({
                                                          onSubmit,
                                                          onChangeScenario,
                                                          onChangeAssumption,
                                                          scenarioValue,
-                                                         assumptionValue
+                                                         assumptionValue,
                                                      }) => {
     const [showAssume, setShowAssume] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
+    const assumptionRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (assumptionRef.current && !assumptionRef.current.contains(event.target as Node)) {
+                updateAssumptionStorage();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [assumptionValue]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (scenarioValue.trim()) {
             onSubmit(scenarioValue.trim(), assumptionValue.trim());
         }
+    };
+
+    const updateAssumptionStorage = () => {
+        localStorage.setItem(ASSUMPTION_STORAGE_KEY, assumptionValue.trim());
+    };
+
+    const handleClearScenario = () => {
+        onChangeScenario('');
+    };
+
+    const handleClearAssumption = () => {
+        onChangeAssumption('');
+        localStorage.removeItem(ASSUMPTION_STORAGE_KEY);
     };
 
     return (
@@ -43,14 +72,15 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                         placeholder="What if..."
                         className="w-full bg-white border border-gray-300 rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#C4634F] focus:border-transparent"
                     />
-                    <motion.button
-                        type="submit"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#C4634F] text-white rounded-full p-2 w-8 h-8 flex items-center justify-center"
-                        whileHover={{scale: 1.05}}
-                        whileTap={{scale: 0.95}}
-                    >
-                        <ArrowRight size={20}/>
-                    </motion.button>
+                    {scenarioValue && (
+                        <button
+                            type="button"
+                            onClick={handleClearScenario}
+                            className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            <X size={20} />
+                        </button>
+                    )}
                 </div>
                 <div className="flex items-center justify-between">
                     <button
@@ -66,7 +96,7 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                         onClick={() => setShowInfo(!showInfo)}
                         className="text-gray-500 hover:text-gray-700"
                     >
-                        <HelpCircle size={20}/>
+                        <InfoIcon size={20}/>
                     </button>
                 </div>
                 <AnimatePresence>
@@ -76,14 +106,26 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                             animate={{opacity: 1, height: 'auto'}}
                             exit={{opacity: 0, height: 0}}
                             transition={{duration: 0.3}}
+                            className="relative"
                         >
                             <textarea
+                                ref={assumptionRef}
                                 value={assumptionValue}
                                 onChange={(e) => onChangeAssumption(e.target.value)}
-                                placeholder="Add 5 random story placeholders. Keep the story short."
-                                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4634F] focus:border-transparent resize-none"
+                                onBlur={updateAssumptionStorage}
+                                placeholder="Add context to your question (Optional, see (i) for help)"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#C4634F] focus:border-transparent resize-none"
                                 rows={3}
                             />
+                            {assumptionValue && (
+                                <button
+                                    type="button"
+                                    onClick={handleClearAssumption}
+                                    className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <X size={20} />
+                                </button>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -112,10 +154,10 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                             </button>
                             <h2 className="text-xl font-bold mb-4">About Assumptions</h2>
                             <p className="text-gray-600">
-                                Assumptions provide context for generating more personalized scenarios.
-                                They help tailor the "What if" questions to your specific situation or story.
-                                Keep it brief and avoid sharing sensitive personal information.
-                            </p>
+                                Assumptions provide context to personalize your 'What if' scenarios. The more assumptions you provide, the more relevant the generated questions will be.
+                                Example: For 'What if I quit my job to start a bakery?', you might add:
+                                '35-year-old software engineer, $50,000 savings, small town, no local bakeries, passionate about sourdough, gluten-free diet trend in area, farmers market every weekend, spouse supportive but concerned about finances.'
+                                Keep it brief and avoid sensitive details. This helps tailor scenarios to your situation.                         </p>
                         </motion.div>
                     </motion.div>
                 )}

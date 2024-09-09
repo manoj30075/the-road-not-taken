@@ -156,7 +156,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
             </div>
             <div className="flex justify-center space-x-4 m-10">
                 <motion.button
-                    onClick={navigateUp}
+                    onClick={navigateDown}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -164,7 +164,7 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
                     <ChevronUp size={20} />
                 </motion.button>
                 <motion.button
-                    onClick={navigateDown}
+                    onClick={navigateUp}
                     className="bg-[#C4634F] text-white rounded-full p-2"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

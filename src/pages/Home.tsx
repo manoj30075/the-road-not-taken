@@ -247,7 +247,7 @@ const Home: React.FC = () => {
                     />
                 </div>
             </div>
-            <h1 className="text-4xl font-bold text-center mb-4">What If...?</h1>
+            <h1 className="text-4xl font-bold text-center mb-4">Divergent Paths</h1>
 
             <div ref={inputRef} className="sticky top-[75px] z-40 bg-[#FAF9F6] pt-10 pb-2">
                 <ScenarioInput

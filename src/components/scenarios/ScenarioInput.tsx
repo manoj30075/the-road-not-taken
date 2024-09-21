@@ -153,11 +153,17 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                                 ✕
                             </button>
                             <h2 className="text-xl font-bold mb-4">About Assumptions</h2>
-                            <p className="text-gray-600">
-                                Assumptions provide context to personalize your 'What if' scenarios. The more assumptions you provide, the more relevant the generated questions will be.
-                                Example: For 'What if I quit my job to start a bakery?', you might add:
-                                '35-year-old software engineer, $50,000 savings, small town, no local bakeries, passionate about sourdough, gluten-free diet trend in area, farmers market every weekend, spouse supportive but concerned about finances.'
-                                Keep it brief and avoid sensitive details. This helps tailor scenarios to your situation.                         </p>
+                            <p className="text-gray-600 text-center">
+                                Assumptions provide context to personalize your 'What if' scenarios. The more
+                                assumptions you provide, the more relevant the generated questions will be.<br/><br/>
+                                <strong>Example:</strong><br/>
+                                For 'What if I adopt a dog?', you might add:<br/>
+                                <span className="italic">
+                                    'Live in a small apartment, work from home, no pets currently, local park nearby, partner allergic to cats, enjoy daily walks.'
+                                </span><br/><br/>
+                                Keep it brief and avoid sensitive details. This helps tailor scenarios to your
+                                situation.
+                            </p>
                         </motion.div>
                     </motion.div>
                 )}

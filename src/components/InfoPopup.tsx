@@ -36,9 +36,9 @@ const InfoPopup: React.FC<InfoPopupProps> = ({ isOpen, onClose }) => {
                             <img
                                 src={forestImage}
                                 alt="Forest Silhouette"
-                                className="w-full h-auto mb-4 rounded-lg"
+                                className="w-2/3 h-auto mb-4 rounded-lg"
                             />
-                            <h2 className="text-2xl font-bold mb-4 text-gray-800">About What If Explorer</h2>
+                            <h2 className="text-2xl font-bold mb-4 text-gray-800">About Divergent Paths</h2>
                             <p className="text-gray-600 text-center">
                                 This app helps you explore different scenarios by asking "What if" questions.
                                 It generates related scenarios based on your input, allowing you to dive deeper
@@ -49,6 +49,14 @@ const InfoPopup: React.FC<InfoPopupProps> = ({ isOpen, onClose }) => {
                                 Just like the paths in the forest, each "What if" question opens up new avenues of thought.
                                 Where will your exploration take you?
                             </p>
+                            <a
+                                href="https://manojpalasamudram.netlify.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-4 text-[#C4634F] hover:underline"
+                            >
+                                About Me
+                            </a>
                         </div>
                     </motion.div>
                 </motion.div>

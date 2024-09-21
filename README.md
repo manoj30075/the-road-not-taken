@@ -21,26 +21,6 @@ Welcome to the frontend repository of the "What If Scenario Explorer" project! T
 - Framer Motion for declarative animations and transitions
 - Lucide React for customizable SVG icon components
 
-## Getting Started
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/manoj30075/what-if-scenario-explorer-frontend.git
-   ```
-
-2. Install the dependencies:
-   ```
-   cd what-if-scenario-explorer-frontend
-   npm install
-   ```
-
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-
-4. Open your browser and visit `http://localhost:5173` to see the application in action.
-
 ## Project Structure
 
 The project structure follows a standard React application layout with separate directories for components, pages, hooks, services, and utilities. The main entry point is `src/main.tsx`, and the core application logic resides in `src/App.tsx`.
@@ -51,17 +31,6 @@ The project structure follows a standard React application layout with separate 
 - `src/services`: Modules for interacting with external APIs or services
 - `src/utils`: Utility functions and helper modules
 
-## Contributing
-
-We welcome contributions from the community! If you'd like to contribute, please follow these steps:
-
-1. Fork the repository
-2. Create a new branch for your feature or bug fix
-3. Commit your changes and push the branch to your fork
-4. Open a pull request with a clear description of your changes
-
-Please ensure that your code adheres to the project's coding style and passes all existing tests.
-
 ## Issues and Feedback
 
 If you encounter any issues or have suggestions for improvement, please [open an issue](https://github.com/your-username/what-if-scenario-explorer-frontend/issues) on the GitHub repository. We appreciate your feedback!
@@ -69,15 +38,5 @@ If you encounter any issues or have suggestions for improvement, please [open an
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-We would like to thank the following libraries and resources that have made this project possible:
-
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Lucide React](https://lucide.dev/)
 
 Happy exploring!

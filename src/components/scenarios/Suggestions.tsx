@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const SUGGESTIONS_CACHE_KEY = 'cachedSuggestions';
-const SUGGESTIONS_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+// const SUGGESTIONS_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 interface SuggestionsProps {
     onSelect: (suggestion: string) => void;
@@ -18,19 +18,72 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onSelect }) => {
     const touchStartY = useRef<number | null>(null);
 
     const fetchSuggestions = useCallback(async () => {
-        const cachedData = localStorage.getItem(SUGGESTIONS_CACHE_KEY);
-        if (cachedData) {
-            const { suggestions, timestamp } = JSON.parse(cachedData);
-            if (Date.now() - timestamp < SUGGESTIONS_CACHE_DURATION) {
-                setSuggestions(suggestions);
-                setIsLoading(false);
-                return;
-            }
-        }
+        // const cachedData = localStorage.getItem(SUGGESTIONS_CACHE_KEY);
+        // if (cachedData) {
+        //     const { suggestions, timestamp } = JSON.parse(cachedData);
+        //     if (Date.now() - timestamp < SUGGESTIONS_CACHE_DURATION) {
+        //         setSuggestions(suggestions);
+        //         setIsLoading(false);
+        //         return;
+        //     }
+        // }
 
+        const tempSuggestions = {
+            "queries": [
+                "What if I move to San Francisco?",
+                "What if humans colonize Mars?",
+                "What if AI becomes sentient?",
+                "What if fossil fuels run out?",
+                "What if we cure cancer?",
+                "What if China invades Taiwan?",
+                "What if I start my own business?",
+                "What if we discover alien life?",
+                "What if global warming accelerates?",
+                "What if I learn a new language?",
+                "What if we achieve immortality?",
+                "What if I change careers?",
+                "What if we eliminate poverty?",
+                "What if cryptocurrency replaces traditional money?",
+                "What if I adopt a child?",
+                "What if we develop teleportation?",
+                "What if social media disappears?",
+                "What if I go vegan?",
+                "What if we make first contact with aliens?",
+                "What if virtual reality becomes indistinguishable from reality?",
+                "What if I could read minds?",
+                "What if we could control the weather?",
+                "What if I win the lottery?",
+                "What if we reverse aging?",
+                "What if I travel the world for a year?",
+                "What if we achieve nuclear fusion?",
+                "What if I lose my job?",
+                "What if we colonize the ocean?",
+                "What if I become famous overnight?",
+                "What if we eliminate all diseases?",
+                "What if I discover a new element?",
+                "What if we harness unlimited clean energy?",
+                "What if I run for political office?",
+                "What if we create a global government?",
+                "What if I invent time travel?",
+                "What if we make contact with parallel universes?",
+                "What if I go off the grid?",
+                "What if we upload consciousness to computers?",
+                "What if I never aged past 25?",
+                "What if we terraform another planet?",
+                "What if I could fly?",
+                "What if we decode animal languages?",
+                "What if I live to be 150?",
+                "What if we create artificial organs?",
+                "What if I wake up 100 years in the future?",
+                "What if we achieve world peace?",
+                "What if I become invisible at will?",
+                "What if we eliminate the need for sleep?",
+                "What if I could relive one day of my life?",
+                "What if we discover the meaning of life?"
+            ]
+        }
         try {
-            const response = await fetch(`${API_BASE_URL}/api/scenarios/suggestions`);
-            const data = await response.json();
+            const data = tempSuggestions;
             setSuggestions(data.queries);
             localStorage.setItem(SUGGESTIONS_CACHE_KEY, JSON.stringify({
                 suggestions: data.queries,

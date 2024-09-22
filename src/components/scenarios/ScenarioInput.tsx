@@ -69,7 +69,7 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                         type="text"
                         value={scenarioValue}
                         onChange={(e) => onChangeScenario(e.target.value)}
-                        placeholder="What if..."
+                        placeholder="Enter your 'What if' question here..."
                         className="w-full bg-white border border-gray-300 rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#C4634F] focus:border-transparent"
                     />
                     {scenarioValue && (
@@ -78,7 +78,7 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                             onClick={handleClearScenario}
                             className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                            <X size={20} />
+                            <X size={20}/>
                         </button>
                     )}
                 </div>
@@ -88,7 +88,7 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                         onClick={() => setShowAssume(!showAssume)}
                         className="text-[#C4634F] font-medium flex items-center"
                     >
-                        Assume <ChevronDown size={20}
+                    Assume <ChevronDown size={20}
                                             className={`ml-1 transform transition-transform ${showAssume ? 'rotate-180' : ''}`}/>
                     </button>
                     <button

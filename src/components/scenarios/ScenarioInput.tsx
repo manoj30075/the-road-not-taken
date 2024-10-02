@@ -19,7 +19,7 @@ const ScenarioInput: React.FC<ScenarioInputProps> = ({
                                                          scenarioValue,
                                                          assumptionValue,
                                                      }) => {
-    const [showAssume, setShowAssume] = useState(false);
+    const [showAssume, setShowAssume] = useState(true);
     const [showInfo, setShowInfo] = useState(false);
     const assumptionRef = useRef<HTMLTextAreaElement>(null);
 
